@@ -184,6 +184,12 @@ const ogc = {
 						ogc_temporal_figure.update();
 						return ogc_temporal_figure.position;
 					},
+					moveToObject: (object)=>{
+						ogc_temporal_figure.position.x = ogc.figure.all[object].position.x;
+						ogc_temporal_figure.position.y = ogc.figure.all[object].position.y;
+						ogc_temporal_figure.update();
+						return ogc_temporal_figure.position;
+					},
 					rotation: 0,
 					rotate: (value, type)=>{
 						if (type==="about") {
@@ -366,6 +372,14 @@ const ogc = {
 							}
 						}
 						return ogc_temporal_figure;
+					},
+					remove: ()=>{
+						for (let i of ogc_temporal_figure.event.list) {
+							ogc_temporal_figure.event.remove(i.title);
+						}
+						ogc.stage.element.removeChild(ogc_temporal_figure.element);
+						delete ogc.figure.all[name];
+						return ogc.figure.all;
 					},
 				};
 				ogc_temporal_figure.show = ogc_temporal_figure.visibility.show;
