@@ -9,5 +9,5 @@ window.figure = figure;
 
 stage.resize(1000, 1000);
 figure.create("test", ["../storage/red.png", "../storage/blue.png", "../storage/green.png"]);
-figure.create("test2", ["../storage/blue.png", "../storage/green.png"]);
-figure.all.test.event.add("click", ()=>alert("test2"), "test");
+figure.all.test.prototype.initialize("jumpNRunPlayer");
+stage.gravity = 3.6;

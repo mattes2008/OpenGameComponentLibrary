@@ -409,12 +409,74 @@ const ogc = {
 						return ogc_temporal_figure;
 					},
 					remove: ()=>{
+						if (ogc_temporal_figure.prototype.type!==undefined) {
+							ogc_temporal_figure.prototype.remove();
+						}
 						for (let i of ogc_temporal_figure.event.list) {
 							ogc_temporal_figure.event.remove(i.title);
 						}
 						ogc.stage.element.removeChild(ogc_temporal_figure.element);
 						delete ogc.figure.all[name];
 						return ogc.figure.all;
+					},
+					prototype: {
+						initialize: (prototype)=>{
+							ogc_temporal_figure.prototype.all[prototype]();
+						},
+						all: {
+							player: ()=>{
+								ogc_temporal_figure.prototype.type = "player";
+								ogc_temporal_figure.prototype.keys = {
+									up: "w",
+									down: "s",
+									right: "d",
+									left: "a",
+								};
+								ogc_temporal_figure.prototype.length = 10;
+								ogc_temporal_figure.prototype.walk = (event)=>{
+									if (event.key===ogc_temporal_figure.prototype.keys.up) {
+										ogc_temporal_figure.move("up", ogc_temporal_figure.prototype.length);
+									} else if (event.key===ogc_temporal_figure.prototype.keys.down) {
+										ogc_temporal_figure.move("down", ogc_temporal_figure.prototype.length);
+									} else if (event.key===ogc_temporal_figure.prototype.keys.right) {
+										ogc_temporal_figure.move("right", ogc_temporal_figure.prototype.length);
+									} else if (event.key===ogc_temporal_figure.prototype.keys.left) {
+										ogc_temporal_figure.move("left", ogc_temporal_figure.prototype.length);
+									}
+								};
+								document.addEventListener("keypress", ogc_temporal_figure.prototype.walk);
+								ogc_temporal_figure.prototype.remove = ()=>{
+									document.removeEventListener("keypress", ogc_temporal_figure.prototype.walk);
+								}
+								return ogc_temporal_figure.prototype;
+							},
+							jumpNRunPlayer: ()=>{
+								ogc_temporal_figure.prototype.type = "jumpNRunPlayer";
+								ogc_temporal_figure.prototype.keys = {
+									jump: " ",
+									right: "d",
+									left: "a",
+								};
+								ogc_temporal_figure.prototype.length = 10;
+								ogc_temporal_figure.prototype.jump = 10;
+								ogc_temporal_figure.prototype.action = (event)=>{
+									if (event.key===ogc_temporal_figure.prototype.keys.jump && ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2)>=ogc.stage.size.height-1) {
+										ogc_temporal_figure.move("up", ogc_temporal_figure.prototype.jump*ogc.stage.gravity);
+									} else if (event.key===ogc_temporal_figure.prototype.keys.right) {
+										ogc_temporal_figure.move("right", ogc_temporal_figure.prototype.length);
+									} else if (event.key===ogc_temporal_figure.prototype.keys.left) {
+										ogc_temporal_figure.move("left", ogc_temporal_figure.prototype.length);
+									}
+								};
+								document.addEventListener("keypress", ogc_temporal_figure.prototype.action);
+								ogc_temporal_figure.gravity.enable(1);
+								ogc_temporal_figure.prototype.remove = ()=>{
+									document.removeEventListener("keypress", ogc_temporal_figure.prototype.action);
+									ogc_temporal_figure.gravity.disable();
+								}
+								return ogc_temporal_figure.prototype;
+							},
+						},
 					},
 				};
 				ogc_temporal_figure.show = ogc_temporal_figure.visibility.show;
