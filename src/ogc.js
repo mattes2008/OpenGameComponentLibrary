@@ -131,6 +131,12 @@ const ogc = {
 					y: Math.round(ogc.stage.size.height/2)-y,
 				};
 			},
+			toCoordinate: (x, y)=>{
+				return {
+					x: ((ogc.stage.size.width/2)-x)*-1,
+					y: (ogc.stage.size.width/2)-y,
+				};
+			},
 			element: destination.appendChild(document.createElement("div")),
 			update: ()=>{
 				ogc.stage.element.style.width = ogc.stage.size.width+"px";
@@ -189,6 +195,28 @@ const ogc = {
 						ogc_temporal_figure.position.y = ogc.figure.all[object].position.y;
 						ogc_temporal_figure.update();
 						return ogc_temporal_figure.position;
+					},
+					gravity: {
+						weight: 1,
+						enable: (weight)=>{
+							ogc_temporal_figure.gravity.disable();
+							ogc_temporal_figure.gravity.weight = weight;
+							ogc_temporal_figure.gravity.interval = setInterval(()=>{
+								if ((ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2))+(ogc.stage.gravity*ogc_temporal_figure.gravity.weight)>=ogc.stage.size.height-1) {
+									ogc_temporal_figure.moveTo("~", (ogc.stage.toCoordinate(0, ogc.stage.size.height).y+(ogc_temporal_figure.size.height/2)));
+								} else {
+									ogc_temporal_figure.move("down", ogc.stage.gravity*ogc_temporal_figure.gravity.weight);
+								}
+								return ogc_temporal_figure.position.y;
+							}, 100);
+							return ogc_temporal_figure.gravity.interval;
+						},
+						disable: ()=>{
+							if (ogc_temporal_figure.gravity.interval!==undefined) {
+								clearInterval(ogc_temporal_figure.gravity.interval);
+							}
+							return false;
+						},
 					},
 					rotation: 0,
 					rotate: (value, type)=>{
@@ -364,8 +392,15 @@ const ogc = {
 						ogc_temporal_figure.element.width = ogc_temporal_figure.size.width;
 						ogc_temporal_figure.element.height = ogc_temporal_figure.size.height;
 						ogc_temporal_figure.element.src = ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual];
-						ogc_temporal_figure.element.style.display = ogc_temporal_figure.visibility.state ? "" : "none";
-						ogc_temporal_figure.element.style.visibility = ogc_temporal_figure.visibility.state ? "" : "hidden";
+						let ogc_temporal_position = {
+							xLeft: ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x+Math.round(ogc_temporal_figure.size.width/2),
+							yTop: ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2),
+							xRight: (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x)-Math.round(ogc_temporal_figure.size.width/2),
+							yBottom: (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y)-Math.round(ogc_temporal_figure.size.height/2),
+						};
+						let ogc_temporal_outOfStage = (ogc_temporal_position.xLeft-1<0 || ogc_temporal_position.xRight>ogc.stage.size.width-1 || ogc_temporal_position.yTop-1<0 || ogc_temporal_position.yBottom>ogc.stage.size.height-1);
+						ogc_temporal_figure.element.style.display = (ogc_temporal_figure.visibility.state && !ogc_temporal_outOfStage) ? "" : "none";
+						ogc_temporal_figure.element.style.visibility = (ogc_temporal_figure.visibility.state && !ogc_temporal_outOfStage) ? "" : "hidden";
 						for (let i of ogc_temporal_figure.collision.list) {
 							if (ogc_temporal_figure.collision.withObject(i.object, i.radius)) {
 								i.method();
