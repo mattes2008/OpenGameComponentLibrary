@@ -492,6 +492,66 @@ const ogc = {
 			},
 			all: {},
 		};
+		/*ogc.audio = {
+			list: [],
+			add: (title, src)=>{
+				let ogc_temporal_audio = {
+					title: title,
+					object: new Audio(src),
+				},
+				for (let i of ogc.audio.list) {
+					if (title===i.title) {
+						throw new Error("audio '"+title+"' already exists");
+					}
+				}
+				ogc.audio.list.push(ogc_temporal_audio);
+				return ogc_temporal_audio;
+			},
+			remove: (title)=>{
+				for (let i=0; i<ogc.audio.list.length; i++) {
+					if (title===ogc.audio.list[i].title) {
+						ogc.audio.list.splice(i, 1);
+						break;
+					} else if (i===ogc.audio.list.length-1) {
+						throw new Error("audio '"+title+"' does not exists");
+					}
+				}
+				return ogc.audio.list;
+			},
+			play: (title)=>{
+				for (let i=0; i<ogc.audio.list.length; i++) {
+					if (title===ogc.audio.list[i].title) {
+						ogc.audio.list[i].object.play();
+						break;
+					} else if (i===ogc.audio.list.length-1) {
+						throw new Error("audio '"+title+"' does not exists");
+					}
+				}
+				return ogc.audio.list;
+			},
+			pause: (title)=>{
+				for (let i=0; i<ogc.audio.list.length; i++) {
+					if (title===ogc.audio.list[i].title) {
+						ogc.audio.list[i].object.pause();
+						break;
+					} else if (i===ogc.audio.list.length-1) {
+						throw new Error("audio '"+title+"' does not exists");
+					}
+				}
+				return ogc.audio.list;
+			},
+			setAttribute: (title, attribute, value)=>{
+				for (let i=0; i<ogc.audio.list.length; i++) {
+					if (title===ogc.audio.list[i].title) {
+						ogc.audio.list[i].object[attribute] = value;
+						break;
+					} else if (i===ogc.audio.list.length-1) {
+						throw new Error("audio '"+title+"' does not exists");
+					}
+				}
+				return ogc.audio.list;
+			},
+		};*/
 		return ogc;
 	}
 };
