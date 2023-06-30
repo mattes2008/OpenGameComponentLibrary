@@ -492,13 +492,13 @@ const ogc = {
 			},
 			all: {},
 		};
-		/*ogc.audio = {
+		ogc.audio = {
 			list: [],
 			add: (title, src)=>{
 				let ogc_temporal_audio = {
 					title: title,
 					object: new Audio(src),
-				},
+				};
 				for (let i of ogc.audio.list) {
 					if (title===i.title) {
 						throw new Error("audio '"+title+"' already exists");
@@ -541,17 +541,22 @@ const ogc = {
 				return ogc.audio.list;
 			},
 			setAttribute: (title, attribute, value)=>{
+				if (attribute==="volume") {
+					value *= 100;
+				}
+				let ogc_temporal_audio;
 				for (let i=0; i<ogc.audio.list.length; i++) {
 					if (title===ogc.audio.list[i].title) {
+						ogc_temporal_audio = i;
 						ogc.audio.list[i].object[attribute] = value;
 						break;
 					} else if (i===ogc.audio.list.length-1) {
 						throw new Error("audio '"+title+"' does not exists");
 					}
 				}
-				return ogc.audio.list;
+				return ogc.audio.list[i].object[attribute];
 			},
-		};*/
+		};
 		return ogc;
 	}
 };
