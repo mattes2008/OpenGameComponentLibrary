@@ -555,4 +555,3 @@ const ogc = {
 		return ogc;
 	}
 };
-export default ogc;

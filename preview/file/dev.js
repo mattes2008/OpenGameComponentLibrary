@@ -1,4 +1,3 @@
-import ogc from "../src/ogc.js"
 window.ogc = ogc;
 
 ogc.init(document.body);
