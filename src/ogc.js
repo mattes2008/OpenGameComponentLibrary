@@ -556,6 +556,15 @@ const ogc = {
 				}
 				return ogc.audio.list[i].object[attribute];
 			},
+			quick: {
+				volume: 100,
+				play: (src)=>{
+					let ogc_temporal_audio = new Audio(src);
+					ogc_temporal_audio.volume = ogc.audio.quick.volume/100;
+					ogc_temporal_audio.play();
+					return ogc_temporal_audio;
+				},
+			},
 		};
 		return ogc;
 	}
