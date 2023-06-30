@@ -133,8 +133,8 @@ const ogc = {
 			},
 			toCoordinate: (x, y)=>{
 				return {
-					x: ((ogc.stage.size.width/2)-x)*-1,
-					y: (ogc.stage.size.width/2)-y,
+					x: Math.round((ogc.stage.size.width/2*-1)+x),
+					y: Math.round((ogc.stage.size.height/2)-y),
 				};
 			},
 			element: destination.appendChild(document.createElement("div")),
@@ -203,13 +203,13 @@ const ogc = {
 							ogc_temporal_figure.gravity.weight = weight;
 							ogc_temporal_figure.gravity.interval = setInterval(()=>{
 								if ((ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2))+(ogc.stage.gravity*ogc_temporal_figure.gravity.weight)>=ogc.stage.size.height-1) {
-									ogc_temporal_figure.moveTo("~", (ogc.stage.toCoordinate(0, ogc.stage.size.height).y+(ogc_temporal_figure.size.height/2)));
+									ogc_temporal_figure.moveTo("~", ogc.stage.toCoordinate(0, ogc.stage.size.height).y+(ogc_temporal_figure.size.height/2));
 								} else {
 									ogc_temporal_figure.move("down", ogc.stage.gravity*ogc_temporal_figure.gravity.weight);
 								}
 								return ogc_temporal_figure.position.y;
 							}, 100);
-							return ogc_temporal_figure.gravity.interval;
+							return true;
 						},
 						disable: ()=>{
 							if (ogc_temporal_figure.gravity.interval!==undefined) {
@@ -510,6 +510,7 @@ const ogc = {
 			remove: (title)=>{
 				for (let i=0; i<ogc.audio.list.length; i++) {
 					if (title===ogc.audio.list[i].title) {
+						ogc.audio.pause(title);
 						ogc.audio.list.splice(i, 1);
 						break;
 					} else if (i===ogc.audio.list.length-1) {
