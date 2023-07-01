@@ -2,6 +2,7 @@ const ogc = {
 	init: (destination)=>{
 		destination.innerHTML = "";
 		ogc.stage = {
+			parent: destination,
 			size: {
 				width: 500,
 				height: 250,
@@ -414,6 +415,7 @@ const ogc = {
 						if (ogc_temporal_figure.prototype.type!==undefined) {
 							ogc_temporal_figure.prototype.remove();
 						}
+						ogc_temporal_figure.gravity.disable();
 						for (let i of ogc_temporal_figure.event.list) {
 							ogc_temporal_figure.event.remove(i.title);
 						}
@@ -645,6 +647,20 @@ const ogc = {
 				},
 			},
 		};
+		return ogc;
+	},
+	quit: ()=>{
+		for (let i in ogc.figure.all) {
+			ogc.figure.all[i].remove();
+		}
+		while (ogc.stage.event.list.length>0) {
+			ogc.stage.event.remove(ogc.stage.event.list[0].title);
+		}
+		ogc.stage.parent.removeChild(ogc.stage.element);
+		delete ogc.stage;
+		delete ogc.figure;
+		delete ogc.audio;
+		delete ogc.storage;
 		return ogc;
 	},
 };
