@@ -647,8 +647,4 @@ const ogc = {
 		};
 		return ogc;
 	},
-	figure: {},
-	stage: {},
-	audio: {},
-	storage: {},
 };
