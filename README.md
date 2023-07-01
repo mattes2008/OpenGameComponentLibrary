@@ -1,8 +1,52 @@
-# OpenGameComponentLibrary
+<img src="github/main.png">
 
-The Open Game Component Library is a simple, easy-to-learn library for 2D-Game-Proramming using JavaScript. It contains different components which makes it easy to code a simple 2D-Game in just a few lines.
+# Open Game Component Library
+
+The Open Game Component Library is a simple, easy-to-learn library for 2D-Game-Programming using JavaScript. It contains different components which makes it easy to code a simple 2D-Game in just a few lines.
 
 ## Get Started
+
+### 1. Import
+
+#### Import by downloading the file
+
+  * download the file 'ogc.js' from https://github.com/mattes2008/OpenGameComponentLibrary/blob/master/src/ogc.js
+  * include it as a script-tag
+
+  **For Example:**
+
+  Directory-Structure:
+    
+```json
+  Project 
+  |index.html
+  |_js
+  | |ogc.js
+  | |scripts.js
+  | |___________
+  |_css
+  | |style.css
+  | |___________
+  |_____________
+```
+
+  index.html:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/ogc.js"
+</head>
+<body>
+<script src="js/scripts.js"></script>
+</body>
+</html>
+```
+
+### 2. Initialization
 
 To initialize the library call the 'init'-function with the stage's parent object:
 
@@ -28,7 +72,7 @@ The components are the central elements of ogc. These components make it easy fo
 
 ### ogc.stage
 
-Stage is a component of ogc. It is the area in which all of the game take place. The stage is created by calling the 'init'-method. After creating, you can call the stage's properties by accessing the stage and the property.
+Stage is a component of ogc. It is the area in which the game take place. The stage is created by calling the 'init'-method. After creating, you can call the stage's properties by accessing the stage and the property.
 
 ```js
 
@@ -133,3 +177,52 @@ Every figure has different properties which help you to interact with them. Your
   * `prototype`
     - `initialize(prototype)` initialize prototype of figure
     - `all` collection of usable prototypes
+
+### ogc.audio
+
+Audio is a component of ogc. Audio allows you to play audio in your game. You can access audio after calling init. You can access the properties of audio by accessing audio and the property.
+
+```js
+
+  ogc.init(destination); //initialize ogc
+  ogc.audio.property //access property
+
+```
+
+#### Properties
+
+  * `list` list of audio titles
+  * `add(title, src)` add an audio title
+  * `remove(title)` remove an audio title
+  * `play(title)` play an audio title
+  * `pause(title)` pause an audio title
+  * `setAttribute(title, attribute, value)` change settings of an audio title
+  * `quick`
+    - `volume` quick-audio volume
+    - `play(src)` play audio quickly
+
+### ogc.storage
+
+Storage is a component of ogc. Storage can be sed to store data during short and long times. You can access storage after calling init. You can access the properties of storage by accessing storage and the property.
+
+```js
+
+  ogc.init(destination); //initialize ogc
+  ogc.storage.property //access property
+
+```
+
+#### Properties
+
+  * `sessionStorage`
+    - `add(key, value, override)` create a key in 'sessionStorage'
+    - `read(key)` get a key in 'sessionStorage'
+    - `remove(key)` remove a key in 'sessionStorage'
+    - `list()` list 'sessionStorage'
+    - `clear()` clear 'sessionStorage'
+* `localStorage`
+    - `add(key, value, override)` create a key in 'localStorage'
+    - `read(key)` get a key in 'localStorage'
+    - `remove(key)` remove a key in 'localStorage'
+    - `list()` list 'localStorage'
+    - `clear()` clear 'localStorage'
