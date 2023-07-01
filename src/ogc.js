@@ -391,7 +391,9 @@ const ogc = {
 						ogc_temporal_figure.element.style.left = (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x-Math.round(ogc_temporal_figure.size.width/2))+"px";
 						ogc_temporal_figure.element.width = ogc_temporal_figure.size.width;
 						ogc_temporal_figure.element.height = ogc_temporal_figure.size.height;
-						ogc_temporal_figure.element.src = ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual];
+						if (ogc_temporal_figure.element.src!==ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual]) {
+							ogc_temporal_figure.element.src = ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual];
+						}
 						let ogc_temporal_position = {
 							xLeft: ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x+Math.round(ogc_temporal_figure.size.width/2),
 							yTop: ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2),
@@ -564,6 +566,82 @@ const ogc = {
 					ogc_temporal_audio.volume = ogc.audio.quick.volume/100;
 					ogc_temporal_audio.play();
 					return ogc_temporal_audio;
+				},
+			},
+		};
+		ogc.storage = {
+			sessionStorage: {
+				add: (key, value, override)=>{
+					if (override===false && sessionStorage[key]!==undefined) {
+						throw new Error("key '"+key+"' already exists in sessionStorage");
+					}
+					let ogc_temporal_storage = {value: value};
+					sessionStorage.setItem(key, JSON.stringify(ogc_temporal_storage));
+					return sessionStorage;
+				},
+				read: (key)=>{
+					if (sessionStorage[key]==undefined) {
+						throw new Error("key '"+key+"' does not exist in sessionStorage");
+					}
+					return JSON.parse(sessionStorage.getItem(key)).value;
+				},
+				remove: (key)=>{
+					if (sessionStorage[key]==undefined) {
+						throw new Error("key '"+key+"' does not exist in sessionStorage");
+					}
+					sessionStorage.removeItem(key);
+					return sessionStorage;
+				},
+				list: ()=>{
+					let ogc_temporal_list = [];
+					for (let i in sessionStorage) {
+						if (i==="length" || i==="getItem" || i==="setItem" || i==="removeItem" || i==="clear" || i==="key") {
+							continue;
+						}
+						ogc_temporal_list.push({key: i, value: JSON.parse(sessionStorage[i]).value,});
+					}
+					return ogc_temporal_list;
+				},
+				clear: ()=>{
+					sessionStorage.clear();
+					return sessionStorage;
+				},
+			},
+			localStorage: {
+				add: (key, value, override)=>{
+					if (override===false && localStorage[key]!==undefined) {
+						throw new Error("key '"+key+"' already exists in localStorage");
+					}
+					let ogc_temporal_storage = {value: value};
+					localStorage.setItem(key, JSON.stringify(ogc_temporal_storage));
+					return localStorage;
+				},
+				read: (key)=>{
+					if (localStorage[key]==undefined) {
+						throw new Error("key '"+key+"' does not exist in localStorage");
+					}
+					return JSON.parse(localStorage.getItem(key)).value;
+				},
+				remove: (key)=>{
+					if (localStorage[key]==undefined) {
+						throw new Error("key '"+key+"' does not exist in localStorage");
+					}
+					localStorage.removeItem(key);
+					return localStorage;
+				},
+				list: ()=>{
+					let ogc_temporal_list = [];
+					for (let i in localStorage) {
+						if (i==="length" || i==="getItem" || i==="setItem" || i==="removeItem" || i==="clear" || i==="key") {
+							continue;
+						}
+						ogc_temporal_list.push({key: i, value: JSON.parse(localStorage[i]).value,});
+					}
+					return ogc_temporal_list;
+				},
+				clear: ()=>{
+					localStorage.clear();
+					return localStorage;
 				},
 			},
 		};
