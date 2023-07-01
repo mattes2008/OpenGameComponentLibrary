@@ -645,26 +645,6 @@ const ogc = {
 				},
 			},
 		};
-		ogc.server = {
-			get: (url)=>{
-				let ogc_temporal_response = await fetch(url);
-				return ogc_temporal_response;
-			},
-			post: (url, data)=>{
-				let ogc_temporal_dataString = "";
-				if (data!==undefined) {
-					ogc_temporal_dataString += "?";
-				}
-				for (let i in data) {
-					ogc_temporal_dataString += i+"="+data[i]+"&";
-				}
-				let ogc_temporal_url = url;
-				for (let i=0; i<ogc_temporal_dataString.length; i++) {
-					ogc_temporal_url += ogc_temporal_dataString[i];
-				}
-				return ogc.server.get(ogc_temporal_url);
-			},
-		};
 		return ogc;
 	},
 };
