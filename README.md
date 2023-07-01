@@ -17,7 +17,7 @@ The Open Game Component Library is a simple, easy-to-learn library for 2D-Game-P
 
   Directory-Structure:
     
-```json
+```
   Project 
   |index.html
   |_js
