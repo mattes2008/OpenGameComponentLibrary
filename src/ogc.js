@@ -646,5 +646,5 @@ const ogc = {
 			},
 		};
 		return ogc;
-	}
+	},
 };
