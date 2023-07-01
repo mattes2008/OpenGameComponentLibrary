@@ -6,11 +6,15 @@ The Open Game Component Library is a simple, easy-to-learn library for 2D-Game-P
 
 To initialize the library call the 'init'-function with the stage's parent object:
 
-  ```ogc.init(destination);```
+  ```js
+    ogc.init(destination);
+  ```
 
   After initialization, select the components you want to use in your program. For example:
 
-  ```const {figure, stage} = ogc;```
+  ```js
+    const {figure, stage} = ogc;
+  ```
 
 By running this line, you are abled to call the components by their name instead of ogc.name:
 
@@ -22,6 +26,41 @@ By running this line, you are abled to call the components by their name instead
 
 The components are the central elements of ogc. These components make it easy for you to code your game and make it alive.
 
+### ogc.stage
+
+Stage is a component of ogc. It is the area in which all of the game take place. The stage is created by calling the 'init'-method. After creating, you can call the stage's properties by accessing the stage and the property.
+
+```js
+
+  ogc.init(destination); //initialize ogc
+  ogc.stage.property //access property
+
+```
+
+#### Properties
+
+  * `size`
+    -`width` width of the stage
+    -`height` height of the stage
+  * `resize(width, height)` resize the stage
+  * `gravity` gravity of stage
+  * `background`
+    - `list` list of backgrounds
+    - `actual` number of actual background
+    - `add(type, value, title)` add a background
+    - `remove(index)` remove a background
+    - `to(index)` chance to specific background
+    - `next()` next background
+    - `last()` last background
+  * `event`
+    - `list` list of event listeners
+    - `add(event, method, title)` add an event listener
+    - `remove(title)` remove an event listener
+  * `toPixel(x, y)` convert coordinate to pixel
+  * `toCoordinate(x, y)` convert pixel to coordinate
+  * `element` stage element
+  * `update()` update stage
+
 ### ogc.figure
 
   * `create(name, costumes)`
@@ -30,7 +69,6 @@ The components are the central elements of ogc. These components make it easy fo
 Figure is a component of ogc. Figures are elements on the stage which can be used as players, enemies, displays and many more.
 To create a figure you have to call the 'create'-function of figure with the name and an array of different costumes. After creating, you can call the figure by the 'all' property and the figure's name.
 
-For example:
 ```js
 
   ogc.figure.create(name, costumes); //create figure
@@ -46,6 +84,7 @@ Every figure has different properties which help you to interact with them. Your
   ogc.figure.all.name.property //access the property
 
 ```
+
 #### Properties
 
   * `position`
