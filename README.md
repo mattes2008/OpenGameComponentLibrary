@@ -145,9 +145,9 @@ Every figure has different properties which help you to interact with them. Your
   * `rotate(value, type)` chance the figures rotation to or about a specific value
   * `distance(object)` calculate the distance to an object
   * `collision`
-    - `radius` figure specific collision radius
-    - `withObject(object)` check for a collision with a specific object
-    - `add(title, object, radius, method)` add a collision listener
+    - `collider` figure specific collision radius
+    - `withObject(object, radius, objectRadius)` check for a collision with a specific object
+    - `add(title, object, method, radius, objectRadius)` add a collision listener
     - `remove(title)` remove a collision listener
     - `list` list of collision listeners
   * `size`
@@ -174,9 +174,12 @@ Every figure has different properties which help you to interact with them. Your
   * `element` figure element
   * `update` update figure
   * `remove` remove figure
-  * `prototype`
-    - `initialize(prototype)` initialize prototype of figure
-    - `all` collection of usable prototypes
+
+#### Templates
+
+  * `player(name, costume)` 2d player figure
+  * `jumpNRunPlayer(name, costume)` 2d jump-n-run figure
+  * `variableDisplay(name, referenceVariable)` variable-display figure
 
 ### ogc.audio
 
@@ -220,9 +223,28 @@ Storage is a component of ogc. Storage can be sed to store data during short and
     - `remove(key)` remove a key in 'sessionStorage'
     - `list()` list 'sessionStorage'
     - `clear()` clear 'sessionStorage'
-* `localStorage`
+  * `localStorage`
     - `add(key, value, override)` create a key in 'localStorage'
     - `read(key)` get a key in 'localStorage'
     - `remove(key)` remove a key in 'localStorage'
     - `list()` list 'localStorage'
     - `clear()` clear 'localStorage'
+
+### ogc.variables
+
+Variables is a component of ogc. It is used to store data until a reload. It can be accessed by accessing variables and the property after calling init.
+
+```js
+
+  ogc.init(destination); //initialize ogc
+  ogc.variables.property //access property
+
+```
+
+#### Properties
+
+  * `storage` collection of variables, stored in variables component
+  * `set(key, value, override)` change or create a variable, stored in variables component
+  * `get(key)` read a variable, stored in variables component
+  * `remove(key)` delete a variable, stored in variables component
+  * `clear()` delete all variables, stored in variables component

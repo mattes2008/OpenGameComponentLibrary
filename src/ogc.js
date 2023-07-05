@@ -8,8 +8,16 @@ const ogc = {
 				height: 250,
 			},
 			resize: (width, height)=>{
-				ogc.stage.size.width = width;
-				ogc.stage.size.height = height;
+				if (width==="fullScreen") {
+					ogc.stage.size.width = window.innerWidth;
+				} else {
+					ogc.stage.size.width = width;
+				}
+				if (height==="fullScreen") {
+					ogc.stage.size.height = window.innerHeight;
+				} else {
+					ogc.stage.size.height = height;
+				}
 				ogc.stage.update();
 				return ogc.stage.size;
 			},
@@ -236,10 +244,13 @@ const ogc = {
 						return ogc_temporal_distance;
 					},
 					collision: {
-						radius: 25,
-						withObject: (object, radius)=>{
+						collider: 25,
+						withObject: (object, radius, objectRadius)=>{
 							if (radius==undefined) {
-								radius = ogc_temporal_figure.collision.radius;
+								radius = ogc_temporal_figure.collision.collider;
+							}
+							if (objectRadius==undefined) {
+								objectRadius = ogc.figure.all[object].collision.collider;
 							}
 							if (object==="edge") {
 								let ogc_temporal_position = {
@@ -252,17 +263,24 @@ const ogc = {
 								};
 								return (ogc_temporal_collisionWithEdge.x || ogc_temporal_collisionWithEdge.y);
 							} else {
-								return (ogc_temporal_figure.distance(object)<=radius);
+								return (ogc_temporal_figure.distance(object)<=radius+objectRadius);
 							}
 						},
-						add: (title, object, radius, method)=>{
+						add: (title, object, method, radius, objectRadius)=>{
 							let ogc_temporal_collision = {
 								title: title,
 								object: object,
 								radius: radius,
+								objectRadius: objectRadius,
 								method: method,
 							};
-							if (title==undefined || object==undefined || radius==undefined) {
+							if (radius==undefined) {
+								ogc_temporal_collision.radius = ogc_temporal_figure.collision.collider;
+							}
+							if (objectRadius==undefined) {
+								ogc_temporal_collision.objectRadius = ogc.figure.all[object].collision.collider;
+							}
+							if (title==undefined || object==undefined) {
 								throw new Error("invalid parameter list");
 							}
 							for (let i=0; i<ogc_temporal_figure.collision.list.length; i++) {
@@ -390,11 +408,141 @@ const ogc = {
 					update: ()=>{
 						ogc_temporal_figure.element.style.top = (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y-Math.round(ogc_temporal_figure.size.height/2))+"px";
 						ogc_temporal_figure.element.style.left = (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x-Math.round(ogc_temporal_figure.size.width/2))+"px";
+						ogc_temporal_figure.element.style.rotate = ogc_temporal_figure.rotation + "deg";
 						ogc_temporal_figure.element.width = ogc_temporal_figure.size.width;
 						ogc_temporal_figure.element.height = ogc_temporal_figure.size.height;
-						if (ogc_temporal_figure.element.src!==ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual]) {
-							ogc_temporal_figure.element.src = ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual];
+						if  (ogc_temporal_figure.costumes.list.length>0) {
+							if (ogc_temporal_figure.element.src!==ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual]) {
+								ogc_temporal_figure.element.src = ogc_temporal_figure.costumes.list[ogc_temporal_figure.costumes.actual];
+							}
 						}
+						let ogc_temporal_position = {
+							xLeft: ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x+Math.round(ogc_temporal_figure.size.width/2),
+							yTop: ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2),
+							xRight: (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x)-Math.round(ogc_temporal_figure.size.width/2),
+							yBottom: (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y)-Math.round(ogc_temporal_figure.size.height/2),
+						};
+						let ogc_temporal_outOfStage = (ogc_temporal_position.xLeft-1<0 || ogc_temporal_position.xRight>ogc.stage.size.width-1 || ogc_temporal_position.yTop-1<0 || ogc_temporal_position.yBottom>ogc.stage.size.height-1);
+						ogc_temporal_figure.element.style.display = (ogc_temporal_figure.visibility.state && !ogc_temporal_outOfStage) ? "" : "none";
+						ogc_temporal_figure.element.style.visibility = (ogc_temporal_figure.visibility.state && !ogc_temporal_outOfStage) ? "" : "hidden";
+						for (let i of ogc_temporal_figure.collision.list) {
+							if (ogc_temporal_figure.collision.withObject(i.object, i.radius, i.objectRadius)) {
+								i.method();
+							}
+						}
+						return ogc_temporal_figure;
+					},
+					remove: ()=>{
+						ogc_temporal_figure.gravity.disable();
+						for (let i of ogc_temporal_figure.event.list) {
+							ogc_temporal_figure.event.remove(i.title);
+						}
+						ogc.stage.element.removeChild(ogc_temporal_figure.element);
+						delete ogc.figure.all[name];
+						return ogc.figure.all;
+					},
+				};
+				ogc_temporal_figure.show = ogc_temporal_figure.visibility.show;
+				ogc_temporal_figure.hide = ogc_temporal_figure.visibility.hide;
+				ogc_temporal_figure.element.style.position = "absolute";
+				ogc_temporal_figure.update();
+				if (ogc.figure.all[name]!==undefined) {
+					throw new Error("figure '"+name+"' already exists");
+				} else {
+					ogc.figure.all[name] = ogc_temporal_figure;
+				}
+				return ogc.figure.all[name];
+			},
+			all: {},
+			templates: {
+				player: (name, costume)=>{
+					let ogc_temporal_figure = ogc.figure.create(name, costume);
+					ogc_temporal_figure.template = {
+						type: "player",
+						keys: {
+							up: "w",
+							down: "s",
+							left: "a",
+							right: "d",
+						},
+						length: 10,
+						walk: (event)=>{
+							for (let i in ogc_temporal_figure.template.keys) {
+								if (event.key===ogc_temporal_figure.template.keys[i]) {
+									ogc_temporal_figure.move(i, ogc_temporal_figure.template.length);
+								}
+							}
+							return ogc_temporal_figure.position;
+						},
+						coreRemove: ogc_temporal_figure.remove,
+					};
+					ogc_temporal_figure.remove = ()=>{
+						document.removeEventListener("keypress", (event)=>{
+							ogc_temporal_figure.template.walk(event);
+						});
+						ogc_temporal_figure.template.coreRemove();
+					};
+					document.addEventListener("keypress", (event)=>{
+						ogc_temporal_figure.template.walk(event);
+					});
+					return ogc_temporal_figure;
+				},
+				jumpNRunPlayer: (name, costume)=>{
+					let ogc_temporal_figure = ogc.figure.create(name, costume);
+					ogc_temporal_figure.template = {
+						type: "jumpNRunPlayer",
+						keys: {
+							jump: " ",
+							left: "a",
+							right: "d",
+						},
+						length: 10,
+						weight: 1,
+						movement: (event)=>{
+							if (event.key===ogc_temporal_figure.template.keys.jump) {
+								if (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+(ogc_temporal_figure.size.height/2)>=ogc.stage.size.height) {
+									ogc_temporal_figure.move("up", (ogc.stage.size.height/2)-ogc.stage.gravity*ogc_temporal_figure.gravity.weight);
+								}
+							} else {
+								for (let i in ogc_temporal_figure.template.keys) {
+									if (event.key===ogc_temporal_figure.template.keys[i]) {
+										ogc_temporal_figure.move(i, ogc_temporal_figure.template.length);
+									}
+								}
+							}
+							return ogc_temporal_figure.position;
+						},
+						coreRemove: ogc_temporal_figure.remove,
+					};
+					ogc_temporal_figure.remove = ()=>{
+						document.removeEventListener("keypress", (event)=>{
+							ogc_temporal_figure.template.movement(event);
+						});
+						ogc_temporal_figure.gravity.disable();
+						ogc_temporal_figure.template.coreRemove();
+					};
+					document.addEventListener("keypress", (event)=>{
+						ogc_temporal_figure.template.movement(event);
+					});
+					ogc_temporal_figure.gravity.enable(ogc_temporal_figure.template.weight);
+					return ogc_temporal_figure;
+				},
+				variableDisplay: (name, referenceVariable)=>{
+					let ogc_temporal_figure = ogc.figure.create(name, []);
+					ogc_temporal_figure.template = {
+						type: "variableDisplay",
+						referenceVariable: referenceVariable,
+						coreRemove: ogc_temporal_figure.remove,
+					};
+					ogc_temporal_figure.remove = ()=>{
+						ogc_temporal_figure.template.coreRemove();
+					};
+					ogc_temporal_figure.costumeUpdate = ()=>{
+						ogc_temporal_figure.element.style.top = (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y-Math.round(ogc_temporal_figure.size.height/2))+"px";
+						ogc_temporal_figure.element.style.left = (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x-Math.round(ogc_temporal_figure.size.width/2))+"px";
+						ogc_temporal_figure.element.style.rotate = ogc_temporal_figure.rotation + "deg";
+						ogc_temporal_figure.element.width = ogc_temporal_figure.size.width;
+						ogc_temporal_figure.element.height = ogc_temporal_figure.size.height;
 						let ogc_temporal_position = {
 							xLeft: ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x+Math.round(ogc_temporal_figure.size.width/2),
 							yTop: ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2),
@@ -410,91 +558,18 @@ const ogc = {
 							}
 						}
 						return ogc_temporal_figure;
-					},
-					remove: ()=>{
-						if (ogc_temporal_figure.prototype.type!==undefined) {
-							ogc_temporal_figure.prototype.remove();
-						}
-						ogc_temporal_figure.gravity.disable();
-						for (let i of ogc_temporal_figure.event.list) {
-							ogc_temporal_figure.event.remove(i.title);
-						}
-						ogc.stage.element.removeChild(ogc_temporal_figure.element);
-						delete ogc.figure.all[name];
-						return ogc.figure.all;
-					},
-					prototype: {
-						initialize: (prototype)=>{
-							ogc_temporal_figure.prototype.all[prototype]();
-						},
-						all: {
-							player: ()=>{
-								ogc_temporal_figure.prototype.type = "player";
-								ogc_temporal_figure.prototype.keys = {
-									up: "w",
-									down: "s",
-									right: "d",
-									left: "a",
-								};
-								ogc_temporal_figure.prototype.length = 10;
-								ogc_temporal_figure.prototype.walk = (event)=>{
-									if (event.key===ogc_temporal_figure.prototype.keys.up) {
-										ogc_temporal_figure.move("up", ogc_temporal_figure.prototype.length);
-									} else if (event.key===ogc_temporal_figure.prototype.keys.down) {
-										ogc_temporal_figure.move("down", ogc_temporal_figure.prototype.length);
-									} else if (event.key===ogc_temporal_figure.prototype.keys.right) {
-										ogc_temporal_figure.move("right", ogc_temporal_figure.prototype.length);
-									} else if (event.key===ogc_temporal_figure.prototype.keys.left) {
-										ogc_temporal_figure.move("left", ogc_temporal_figure.prototype.length);
-									}
-								};
-								document.addEventListener("keypress", ogc_temporal_figure.prototype.walk);
-								ogc_temporal_figure.prototype.remove = ()=>{
-									document.removeEventListener("keypress", ogc_temporal_figure.prototype.walk);
-								}
-								return ogc_temporal_figure.prototype;
-							},
-							jumpNRunPlayer: ()=>{
-								ogc_temporal_figure.prototype.type = "jumpNRunPlayer";
-								ogc_temporal_figure.prototype.keys = {
-									jump: " ",
-									right: "d",
-									left: "a",
-								};
-								ogc_temporal_figure.prototype.length = 10;
-								ogc_temporal_figure.prototype.jump = 10;
-								ogc_temporal_figure.prototype.action = (event)=>{
-									if (event.key===ogc_temporal_figure.prototype.keys.jump && ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y+Math.round(ogc_temporal_figure.size.height/2)>=ogc.stage.size.height-1) {
-										ogc_temporal_figure.move("up", ogc_temporal_figure.prototype.jump*ogc.stage.gravity);
-									} else if (event.key===ogc_temporal_figure.prototype.keys.right) {
-										ogc_temporal_figure.move("right", ogc_temporal_figure.prototype.length);
-									} else if (event.key===ogc_temporal_figure.prototype.keys.left) {
-										ogc_temporal_figure.move("left", ogc_temporal_figure.prototype.length);
-									}
-								};
-								document.addEventListener("keypress", ogc_temporal_figure.prototype.action);
-								ogc_temporal_figure.gravity.enable(1);
-								ogc_temporal_figure.prototype.remove = ()=>{
-									document.removeEventListener("keypress", ogc_temporal_figure.prototype.action);
-									ogc_temporal_figure.gravity.disable();
-								}
-								return ogc_temporal_figure.prototype;
-							},
-						},
-					},
-				};
-				ogc_temporal_figure.show = ogc_temporal_figure.visibility.show;
-				ogc_temporal_figure.hide = ogc_temporal_figure.visibility.hide;
-				ogc_temporal_figure.element.style.position = "absolute";
-				ogc_temporal_figure.update();
-				if (ogc.figure.all[name]!==undefined) {
-					throw new Error("figure '"+name+"' already exists");
-				} else {
-					ogc.figure.all[name] = ogc_temporal_figure;
-				}
-				return ogc.figure.all[name];
+					};
+					ogc.stage.element.removeChild(ogc_temporal_figure.element);
+					ogc_temporal_figure.element = ogc.stage.element.appendChild(document.createElement("div"));
+					ogc_temporal_figure.element.style.position = "absolute";
+					ogc_temporal_figure.display = ogc_temporal_figure.element.appendChild(document.createElement("input"));
+					ogc_temporal_figure.display.readOnly = true;
+					ogc_temporal_figure.display.value = ogc.variables.storage[ogc_temporal_figure.template.referenceVariable].value;
+					ogc_temporal_figure.costumeUpdate();
+					ogc.variables.storage[ogc_temporal_figure.template.referenceVariable].display.push(name);
+					return ogc_temporal_figure;
+				},
 			},
-			all: {},
 		};
 		ogc.audio = {
 			list: [],
@@ -647,6 +722,38 @@ const ogc = {
 				},
 			},
 		};
+		ogc.variables = {
+			storage: {},
+			set: (key, value, override)=>{
+				let ogc_temporal_audio = {
+					value: value,
+					display: [],
+				};
+				if (ogc.variables.storage[key]!==undefined && override===false) {
+					throw new Error("variable '"+key+"' already exists");
+				} else if (ogc.variables.storage[key]==undefined) {
+					ogc.variables.storage[key] = ogc_temporal_audio;
+				}
+				ogc.variables.storage[key].value = value;
+				for (let i of ogc.variables.storage[key].display) {
+					ogc.figure.all[i].display.value = ogc.variables.storage[key].value;
+				}
+				return ogc.variables.storage[key].value;
+			},
+			get: (key)=>{
+				return ogc.variables.storage[key].value;
+			},
+			remove: (key)=>{
+				delete ogc.variables.storage[key];
+				return ogc.variables.storage;
+			},
+			clear: ()=>{
+				for (let i in ogc.variables.storage) {
+					delete ogc.variables.storage[i];
+				}
+				return ogc.variables.storage;
+			},
+		};
 		return ogc;
 	},
 	quit: ()=>{
@@ -657,10 +764,11 @@ const ogc = {
 			ogc.stage.event.remove(ogc.stage.event.list[0].title);
 		}
 		ogc.stage.parent.removeChild(ogc.stage.element);
-		delete ogc.stage;
-		delete ogc.figure;
-		delete ogc.audio;
-		delete ogc.storage;
+		for (let i in ogc) {
+			if (i!=="init" && i!=="quit") {
+				delete ogc[i];
+			}
+		}
 		return ogc;
 	},
 };
