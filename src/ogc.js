@@ -405,6 +405,31 @@ const ogc = {
 						},
 					},
 					element: ogc.stage.element.appendChild(document.createElement("img")),
+					message: {
+						send: (keyword, data)=>{
+							if (ogc.message[keyword]==undefined) {
+								ogc.message[keyword] = [];
+							}
+							for (let i of ogc.message[keyword]) {
+								i.method({
+									data: data,
+									sender: ogc_temporal_figure,
+								}, ogc.figure.all[i.figure]);
+							}
+							return ogc.message[keyword];
+						},
+						on: (keyword, method)=>{
+							if (ogc.message[keyword]==undefined) {
+								ogc.message[keyword] = [];
+							}
+							let ogc_temporal_config = {
+								figure: name,
+								method: method,
+							};
+							ogc.message[keyword].push(ogc_temporal_config);
+							return ogc.message[keyword];
+						},
+					},
 					update: ()=>{
 						ogc_temporal_figure.element.style.top = (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y-Math.round(ogc_temporal_figure.size.height/2))+"px";
 						ogc_temporal_figure.element.style.left = (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x-Math.round(ogc_temporal_figure.size.width/2))+"px";
@@ -754,6 +779,7 @@ const ogc = {
 				return ogc.variables.storage;
 			},
 		};
+		ogc.message = {};
 		return ogc;
 	},
 	quit: ()=>{

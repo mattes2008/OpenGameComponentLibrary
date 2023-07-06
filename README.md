@@ -172,6 +172,9 @@ Every figure has different properties which help you to interact with them. Your
     - `add(event, method, title)` add an event listener
     - `remove(title)` remove an event listener
   * `element` figure element
+  * `message` costume events
+    - `send(keyword, data)` send a message to every connected listener
+    - `on(keyword, method)` created a message listener
   * `update` update figure
   * `remove` remove figure
 
@@ -248,3 +251,17 @@ Variables is a component of ogc. It is used to store data until a reload. It can
   * `get(key)` read a variable, stored in variables component
   * `remove(key)` delete a variable, stored in variables component
   * `clear()` delete all variables, stored in variables component
+
+### ogc.message
+
+Message is a component of ogc. You can use it for creating senders and listeners for specific event.
+
+```js
+
+  ogc.init(destination); //initialize ogc
+  ogc.message //access listener list
+  
+  ogc.figure.create("name", [costumes]); //create a figure
+  ogc.figure.all.name.message //access a property
+
+```
