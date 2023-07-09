@@ -162,11 +162,15 @@ const ogc = {
 		ogc.stage.element.style.position = "relative";
 		ogc.stage.update();
 		ogc.figure = {
-			create: (name, costume)=>{
+			constructor: (name, costume, type)=>{
 				if (costume==undefined) {
 					costume = [];
 				}
+				if (type==undefined) {
+					type = "figure";
+				}
 				let ogc_temporal_figure = {
+					type: type,
 					position: {
 						x: 0,
 						y: 0,
@@ -404,6 +408,18 @@ const ogc = {
 							return ogc_temporal_figure.event.list;
 						},
 					},
+					clone: (onCreation)=>{
+						let ogc_temporal_clone = ogc.figure.constructor("", ogc_temporal_figure.costumes.list, "clone");
+						ogc_temporal_clone.position.x = ogc_temporal_figure.position.x;
+						ogc_temporal_clone.position.y = ogc_temporal_figure.position.y;
+						ogc_temporal_clone.rotation = ogc_temporal_figure.rotation;
+						ogc_temporal_clone.size.width = ogc_temporal_figure.size.width;
+						ogc_temporal_clone.size.height = ogc_temporal_figure.size.height;
+						ogc_temporal_clone.visibility.state = ogc_temporal_figure.visibility.state;
+						ogc_temporal_clone.update();
+						onCreation(ogc_temporal_clone);
+						return ogc_temporal_clone;
+					},
 					element: ogc.stage.element.appendChild(document.createElement("img")),
 					message: {
 						send: (keyword, data)=>{
@@ -463,7 +479,9 @@ const ogc = {
 							ogc_temporal_figure.event.remove(i.title);
 						}
 						ogc.stage.element.removeChild(ogc_temporal_figure.element);
-						delete ogc.figure.all[name];
+						if (ogc_temporal_figure.type!=="clone") {
+							delete ogc.figure.all[name];
+						}
 						return ogc.figure.all;
 					},
 				};
@@ -471,6 +489,10 @@ const ogc = {
 				ogc_temporal_figure.hide = ogc_temporal_figure.visibility.hide;
 				ogc_temporal_figure.element.style.position = "absolute";
 				ogc_temporal_figure.update();
+				return ogc_temporal_figure;
+			},
+			create: (name, costume)=>{
+				let ogc_temporal_figure = ogc.figure.constructor(name, costume);
 				if (ogc.figure.all[name]!==undefined) {
 					throw new Error("figure '"+name+"' already exists");
 				} else {

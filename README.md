@@ -171,6 +171,7 @@ Every figure has different properties which help you to interact with them. Your
     - `list` list of event listeners
     - `add(event, method, title)` add an event listener
     - `remove(title)` remove an event listener
+  * `clone(onCreation)` create a clone of the figure
   * `element` figure element
   * `message` costume events
     - `send(keyword, data)` send a message to every connected listener
