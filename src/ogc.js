@@ -209,6 +209,21 @@ const ogc = {
 						ogc_temporal_figure.update();
 						return ogc_temporal_figure.position;
 					},
+					moveRelative: (direction, length)=>{
+						if (direction==="forward") {
+							ogc_temporal_figure.move(ogc_temporal_figure.rotation, length);
+						} else if (direction==="backward") {
+							ogc_temporal_figure.move(ogc_temporal_figure.rotation, length*-1);
+						} else if (direction==="right") {
+							ogc_temporal_figure.move(ogc_temporal_figure.rotation+90, length);
+						} else if (direction==="left") {
+							ogc_temporal_figure.move(ogc_temporal_figure.rotation+90, length*-1);
+						} else {
+							ogc_temporal_figure.move(ogc_temporal_figure.rotation+direction, length);
+						}
+						ogc_temporal_figure.update();
+						return ogc_temporal_figure.position;
+					},
 					gravity: {
 						weight: 1,
 						enable: (weight)=>{
@@ -232,15 +247,17 @@ const ogc = {
 						},
 					},
 					rotation: 0,
-					rotate: (value, type)=>{
-						if (type==="about") {
-							ogc_temporal_figure.rotation += value;
-						} else {
-							ogc_temporal_figure.rotation = value;
-						}
+					rotate: (value)=>{
+						ogc_temporal_figure.rotation = value;
 						ogc_temporal_figure.update();
 						return ogc_temporal_figure.rotation;
 					},
+					rotateRelative: (value)=>{
+						ogc_temporal_figure.rotation += value;
+						ogc_temporal_figure.update();
+						return ogc_temporal_figure.rotation;
+					},
+					rotationEnabled: true,
 					distance: (object)=>{
 						let ogc_temporal_catheter_x = Math.max(ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x, ogc.stage.toPixel(ogc.figure.all[object].position.x, 0).x)-Math.min(ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x, ogc.stage.toPixel(ogc.figure.all[object].position.x, 0).x);
 						let ogc_temporal_catheter_y = Math.max(ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y, ogc.stage.toPixel(0, ogc.figure.all[object].position.y).y)-Math.min(ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y, ogc.stage.toPixel(0, ogc.figure.all[object].position.y).y);
@@ -315,6 +332,12 @@ const ogc = {
 					resize: (width, height)=>{
 						ogc_temporal_figure.size.width = width;
 						ogc_temporal_figure.size.height = height;
+						ogc_temporal_figure.update();
+						return ogc_temporal_figure.size;
+					},
+					resizeRelative: (value)=>{
+						ogc_temporal_figure.size.width *= value;
+						ogc_temporal_figure.size.height *= value;
 						ogc_temporal_figure.update();
 						return ogc_temporal_figure.size;
 					},
@@ -449,7 +472,9 @@ const ogc = {
 					update: ()=>{
 						ogc_temporal_figure.element.style.top = (ogc.stage.toPixel(0, ogc_temporal_figure.position.y).y-Math.round(ogc_temporal_figure.size.height/2))+"px";
 						ogc_temporal_figure.element.style.left = (ogc.stage.toPixel(ogc_temporal_figure.position.x, 0).x-Math.round(ogc_temporal_figure.size.width/2))+"px";
-						ogc_temporal_figure.element.style.rotate = ogc_temporal_figure.rotation + "deg";
+						if (ogc_temporal_figure.rotationEnabled) {
+							ogc_temporal_figure.element.style.rotate = ogc_temporal_figure.rotation + "deg";
+						}
 						ogc_temporal_figure.element.width = ogc_temporal_figure.size.width;
 						ogc_temporal_figure.element.height = ogc_temporal_figure.size.height;
 						if  (ogc_temporal_figure.costumes.list.length>0) {

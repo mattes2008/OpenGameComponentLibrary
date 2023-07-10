@@ -137,12 +137,15 @@ Every figure has different properties which help you to interact with them. Your
   * `move(direction, length)` move the figure about a length into a direction
   * `moveTo(x, y)` move the figure to an x and y coordinate
   * `moveToObject(object)` move the figure to another object
+  * `moveRelative(direction, length)` move the figure relative to the figure's rotation
   * `gravity`
     - `weight` figure specific weight
     - `enable(weight)` enable gravity with a figure specific weight
     - `disable()` disable gravity for the figure
   * `rotation` rotation of figure
   * `rotate(value, type)` chance the figures rotation to or about a specific value
+  * `rotateRelative(value)` rotate the figure relative to the figure's rotation
+  * `rotationEnabled` rotation type of the figure
   * `distance(object)` calculate the distance to an object
   * `collision`
     - `collider` figure specific collision radius
@@ -154,6 +157,7 @@ Every figure has different properties which help you to interact with them. Your
     - `width` width of the figure
     - `height` height of the figure
   * `resize(width, height)` resize the figure
+  * `resize(value)` resize the figure by multiplying with a specific value
   * `visibility`
     - `state` state of visibility
     - `show()` change visibility to true
